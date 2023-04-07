@@ -5,10 +5,17 @@ read -p "Wprowadź użytkownika bez uprawnień root (służy do ograczenia dost�
 read -p "Wprowadź adresy IP z których można się logować w formie np. 192.168.0.0/24 10.0.0.0/24: " allowed_ips
 read -p "Wprowadź użytkowników, którzy mogą się logować wymieniając ich w formie \"user1\" \"user2\": " allowed_users
 
+# Pobranie adresów DNS od użytkownika
+echo -n "Podaj adresy DNS oddzielone spacją: "
+read dns_addresses
+
+# Pobranie adresów DNS od użytkownika
+echo -n "Podaj adres domenowy DNS: "
+read domena
+
 # Pobranie hasła do użytkownika root w MySQL
 echo -n "Podaj hasło użytkownika root w MySQL: "
 read -s mysql_password
-echo
 
 # Ustawienie adresów IP, dla których będzie dostępny serwer
 allowed_ips=("$allowed_ips")
@@ -16,12 +23,19 @@ allowed_ips=("$allowed_ips")
 # Ustawienie użytkowników, którzy mają mieć dostęp do serwera
 allowed_users=(allowed_users)
 
-cat >>  /etc/resolv.conf << EOF
-		search umg.edu.pl
-		nameserver 153.19.111.230
-		nameserver 153.19.250.19
-		nameserver 153.19.112.230
+# Dodanie wpisów do pliku /etc/resolv.conf
+cat > /etc/resolv.conf <<EOF
+search $domena
 EOF
+
+# Dodanie wpisów do pliku /etc/resolv.conf
+cat > /etc/resolv.conf <<EOF
+search umg.edu.pl
+EOF
+
+for dns_address in $dns_addresses; do
+    echo "nameserver $dns_address" >> /etc/resolv.conf
+done
 
 # Aktualizacja systemu i instalacja narzędzi
 apt update
