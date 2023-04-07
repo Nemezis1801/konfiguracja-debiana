@@ -8,7 +8,7 @@ read -p "Wprowadź użytkownika bez uprawnień root (służy do ograczenia dost�
 
 while true
 do
-    read -p "Wprowadź adresy IP z których można się logować (naciśnij ENTER aby zakończyć): " value
+    read -p "Wprowadź adresy IP z maską z których można się logować (naciśnij ENTER aby zakończyć): " value
     if [ -z "$value" ]
     then
         break
