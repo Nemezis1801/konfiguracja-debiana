@@ -43,13 +43,6 @@ read -p $'\e[33mPodaj adres domenowy DNS: \e[0m' domena
 read -s -p $'\e[32mPodaj hasło użytkownika root w MySQL: \e[0m' mysql_password
 echo ""
 
-
-# Ustawienie adresów IP, dla których będzie dostępny serwer
-#allowed_ips=("$allowed_ips")
-
-# Ustawienie użytkowników, którzy mają mieć dostęp do serwera
-#allowed_users=(allowed_users)
-
 # Dodanie wpisów do pliku /etc/resolv.conf
 echo -e "\e[32mDodawanie domeny do pliku /etc/resolv.conf\e[0m"
 cat > /etc/resolv.conf <<EOF
@@ -173,7 +166,6 @@ chmod 666 /var/log/php_errors.log
 # Edycja pliku konfiguracyjnego SSH
 echo -e "\e[32mKonfiguracja SSH\e[0m"
 sed -i 's/#PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
-sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
 sed -i 's/#MaxAuthTries 6/MaxAuthTries 3/' /etc/ssh/sshd_config
 sed -i 's/#LoginGraceTime 2m/LoginGraceTime 1m/' /etc/ssh/sshd_config
 sed -i 's/#PermitEmptyPasswords no/PermitEmptyPasswords no/' /etc/ssh/sshd_config
