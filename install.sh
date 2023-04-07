@@ -124,9 +124,12 @@ cp /etc/apache2/conf-available/other-vhosts-access-log.conf /etc/apache2/conf-av
 sed -i 's|CustomLog /var/log/apache2/other_vhosts_access.log vhost_combined|#CustomLog /var/log/apache2/other_vhosts_access.log vhost_combined|g' /etc/apache2/conf-available/other-vhosts-access-log.conf
 echo "CustomLog /var/log/apache2/access.log combined" >> /etc/apache2/conf-available/other-vhosts-access-log.conf
 
+# Pobranie numeru wersji PHP
+php_version=$(php -r "echo PHP_VERSION;")
+
 # Utworzenie osobnego pliku logów dla PHP
-cp /etc/php/7.3/apache2/php.ini /etc/php/7.3/apache2/php.ini.bak
-sed -i 's|;error_log = log/php_error.log|error_log = /var/log/php_errors.log|g' /etc/php/7.3/apache2/php.ini
+cp /etc/php/$php_version/apache2/php.ini /etc/php/$php_version/apache2/php.ini.bak
+sed -i 's|;error_log = log/php_error.log|error_log = /var/log/php_errors.log|g' /etc/php/$php_version/apache2/php.ini
 touch /var/log/php_errors.log
 chmod 666 /var/log/php_errors.log
 systemctl restart apache2
