@@ -100,6 +100,7 @@ echo -e "\e[32mKonfiguracja vsftpd\e[0m"
 sed -i 's/#chroot_local_user=YES/chroot_local_user=YES/g' /etc/vsftpd.conf
 echo "local_root=/home/\$USER" >> /etc/vsftpd.conf
 echo "write_enable=YES" >> /etc/vsftpd.conf
+echo "user_sub_token=$USER" >> /etc/vsftpd.conf
 
 # Konfiguracja Fail2ban
 echo -e "\e[32mKonfiguracja Fail2ban\e[0m"
