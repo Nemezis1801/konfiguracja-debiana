@@ -4,11 +4,11 @@ allowed_ips=()
 allowed_users=()
 dns_addresses=()
 # Pobranie wartości od użytkownika i przypisanie jej do zmiennej
-read -p "Wprowadź użytkownika bez uprawnień root (służy do ograczenia dostępu temu użytkownikowi): " USERS
+read -p $'\e[33mWprowadź użytkownika bez uprawnień root (służy do ograczenia dostępu temu użytkownikowi): \e[0m' USERS
 
 while true
 do
-    read -p "Wprowadź adresy IP z maską z których można się logować (naciśnij ENTER aby zakończyć): " value
+    read -p $'\e[33mWprowadź adresy IP z maską z których można się logować (naciśnij ENTER aby zakończyć): \e[0m' value
     if [ -z "$value" ]
     then
         break
@@ -19,7 +19,7 @@ done
 
 while true
 do
-    read -p "Wprowadź użytkowników, którzy mogą się logować (naciśnij ENTER aby zakończyć): " value
+    read -p $'\e[34mWprowadź użytkowników, którzy mogą się logować (naciśnij ENTER aby zakończyć): \e[0m' value
     if [ -z "$value" ]
     then
         break
@@ -30,7 +30,7 @@ done
 
 while true
 do
-    read -p "Podaj adresy IP DNSów (naciśnij ENTER aby zakończyć): " value
+    read -p $'\e[33mPodaj adresy IP DNSów (naciśnij ENTER aby zakończyć): \e[0m' value
     if [ -z "$value" ]
     then
         break
@@ -39,8 +39,8 @@ do
     fi
 done
 
-read -p "Podaj adres domenowy DNS: " domena
-read -p "Podaj hasło użytkownika root w MySQL: " mysql_password
+read -p $'\e[34mPodaj adres domenowy DNS: \e[0m' domena
+read -p $'\e[33mPodaj hasło użytkownika root w MySQL: \e[0m' mysql_password
 
 
 # Ustawienie adresów IP, dla których będzie dostępny serwer
@@ -84,7 +84,7 @@ systemctl enable mariadb > /dev/null
 
 # Wywołanie funkcji mysql_secure_installation z automatycznym wprowadzeniem danych
 echo -e "\e[32mZabezpieczanie bazy danych\e[0m"
-mysql_secure_installation <<EOF
+mysql_secure_installation <<EOF >/dev/null 2>&1
 
 $mysql_password
 y
@@ -94,7 +94,7 @@ y
 y
 y
 
-EOF > /dev/null
+EOF
 
 # Instalacja narzędzi do pracy z plikami FTP
 echo -e "\e[32mwłączanie vsftpd\e[0m"
