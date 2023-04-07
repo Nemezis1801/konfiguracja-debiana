@@ -8,7 +8,7 @@ read -p $'\e[33mWprowadź użytkownika bez uprawnień root (służy do ograczeni
 
 while true
 do
-    read -p $'\e[33mWprowadź adresy IP z maską z których można się logować (naciśnij ENTER aby zakończyć): \e[0m' value
+    read -p $'\e[32mWprowadź adresy IP z maską z których można się logować (naciśnij ENTER aby zakończyć): \e[0m' value
     if [ -z "$value" ]
     then
         break
@@ -19,7 +19,7 @@ done
 
 while true
 do
-    read -p $'\e[34mWprowadź użytkowników, którzy mogą się logować (naciśnij ENTER aby zakończyć): \e[0m' value
+    read -p $'\e[33mWprowadź użytkowników, którzy mogą się logować (naciśnij ENTER aby zakończyć): \e[0m' value
     if [ -z "$value" ]
     then
         break
@@ -30,7 +30,7 @@ done
 
 while true
 do
-    read -p $'\e[33mPodaj adresy IP DNSów (naciśnij ENTER aby zakończyć): \e[0m' value
+    read -p $'\e[32mPodaj adresy IP DNSów (naciśnij ENTER aby zakończyć): \e[0m' value
     if [ -z "$value" ]
     then
         break
@@ -39,8 +39,8 @@ do
     fi
 done
 
-read -p $'\e[34mPodaj adres domenowy DNS: \e[0m' domena
-read -p $'\e[33mPodaj hasło użytkownika root w MySQL: \e[0m' mysql_password
+read -p $'\e[33mPodaj adres domenowy DNS: \e[0m' domena
+read -ps $'\e[32mPodaj hasło użytkownika root w MySQL: \e[0m' mysql_password
 
 
 # Ustawienie adresów IP, dla których będzie dostępny serwer
@@ -67,20 +67,20 @@ done
 
 # Aktualizacja systemu i instalacja narzędzi
 echo -e "\e[32mAktulizacja i instalacja niezbędnych narzędzi\e[0m" 
-apt-get update > /dev/null
-apt-get upgrade -y > /dev/null
-apt-get install htop fail2ban ufw build-essential curl git apache2 mariadb-server mariadb-client php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml vsftpd -y > /dev/null
+apt-get update >/dev/null 2>&1
+apt-get upgrade -y >/dev/null 2>&1
+apt-get install htop fail2ban ufw build-essential curl git apache2 mariadb-server mariadb-client php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml vsftpd -y >/dev/null 2>&1
 
 # Instalacja serwera Apache
 echo -e "\e[32mWłączanie Apache\e[0m"
-systemctl start apache2 > /dev/null
-systemctl enable apache2 > /dev/null
+systemctl start apache2 >/dev/null 2>&1
+systemctl enable apache2 >/dev/null 2>&1
 
 
 # Instalacja bazy danych MySQL/MariaDB
 echo -e "\e[32mWłączanie MariaDB\e[0m"
-systemctl start mariadb > /dev/null
-systemctl enable mariadb > /dev/null
+systemctl start mariadb >/dev/null 2>&1
+systemctl enable mariadb >/dev/null 2>&1
 
 # Wywołanie funkcji mysql_secure_installation z automatycznym wprowadzeniem danych
 echo -e "\e[32mZabezpieczanie bazy danych\e[0m"
@@ -98,8 +98,8 @@ EOF
 
 # Instalacja narzędzi do pracy z plikami FTP
 echo -e "\e[32mwłączanie vsftpd\e[0m"
-systemctl start vsftpd > /dev/null
-systemctl enable vsftpd > /dev/null
+systemctl start vsftpd  >/dev/null 2>&1
+systemctl enable vsftpd >/dev/null 2>&1
 
 # Ustawienie opcji chroot_local_user na YES
 echo -e "\e[32mKonfiguracja vsftpd\e[0m"
@@ -112,25 +112,25 @@ echo -e "\e[32mKonfiguracja Fail2ban\e[0m"
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 sed -i 's/bantime = 10m/bantime = 1h/g' /etc/fail2ban/jail.local
 sed -i 's/maxretry = 5/maxretry = 3/g' /etc/fail2ban/jail.local
-systemctl enable fail2ban > /dev/null
-systemctl start fail2ban > /dev/null
+systemctl enable fail2ban 
+systemctl start fail2ban
 
 # Konfiguracja zasad firewalla
 echo -e "\e[32mKonfiguracja firewalla\e[0m"
-ufw default deny incoming > /dev/null
-ufw default allow outgoing > /dev/null
-ufw allow ssh > /dev/null
-ufw allow http > /dev/null
-ufw allow https > /dev/null
-ufw enable > /dev/null
+ufw default deny incoming >/dev/null 2>&1
+ufw default allow outgoing >/dev/null 2>&1
+ufw allow ssh >/dev/null 2>&1
+ufw allow http >/dev/null 2>&1
+ufw allow https >/dev/null 2>&1
+ufw enable >/dev/null 2>&1
 
 # Wyłączenie niepotrzebnych modułów Apache
 echo -e "\e[32mWyłączanie modułów Apache\e[0m"
-a2dismod --quiet status --force > /dev/null
-a2dismod --quiet autoindex --force > /dev/null
-a2dismod --quiet cgi --force > /dev/null
-a2dismod --quiet negotiation --force > /dev/null
-a2dismod --quiet userdir --force > /dev/null
+a2dismod --quiet status --force >/dev/null 2>&1
+a2dismod --quiet autoindex --force >/dev/null 2>&1
+a2dismod --quiet cgi --force >/dev/null 2>&1
+a2dismod --quiet negotiation --force >/dev/null 2>&1
+a2dismod --quiet userdir --force >/dev/null 2>&1
 
 # Zablokowanie dostępu do plików .htaccess
 echo -e "\e[32mZablokowanie dostępu do plików .htaccess\e[0m"
@@ -143,9 +143,9 @@ a2enconf htaccess > /dev/null
 # Sprawdzenie, czy użytkownik www-data istnieje
 echo -e "\e[32mKonfiguracja użytkownika www-data\e[0m"
 if id -u www-data >/dev/null 2>&1; then
-    usermod --shell /usr/sbin/nologin www-data > /dev/null
+    usermod --shell /usr/sbin/nologin www-data >/dev/null 2>&1
 else
-    useradd --no-create-home --shell /usr/sbin/nologin www-data > /dev/null
+    useradd --no-create-home --shell /usr/sbin/nologin www-data >/dev/null 2>&1
 fi
 
 # Zmiana uprawnień dla plików i katalogów
