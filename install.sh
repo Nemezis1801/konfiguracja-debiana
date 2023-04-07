@@ -201,3 +201,9 @@ systemctl restart sshd
 # Restart usługi vsftpd
 echo -e "\e[32mRestart vsftpd\e[0m"
 systemctl restart vsftpd
+
+# Ponowna aktualizacja
+apt-get update
+apt-get full-upgrade -y
+
+reboot
