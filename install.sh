@@ -118,12 +118,12 @@ systemctl start fail2ban >/dev/null 2>&1
 
 # Konfiguracja zasad firewalla
 echo -e "\e[32mKonfiguracja firewalla\e[0m"
-ufw default deny incoming 
-ufw default allow outgoing 
-ufw allow ssh 
-ufw allow http
-ufw allow https 
-ufw enable
+ufw default deny incoming  >/dev/null 2>&1
+ufw default allow outgoing >/dev/null 2>&1
+ufw allow ssh >/dev/null 2>&1
+ufw allow http >/dev/null 2>&1
+ufw allow https >/dev/null 2>&1
+ufw enable -y >/dev/null 2>&1
 
 # Wyłączenie niepotrzebnych modułów Apache
 echo -e "\e[32mWyłączanie modułów Apache\e[0m"
