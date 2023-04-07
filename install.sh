@@ -118,6 +118,7 @@ ufw allow http >/dev/null 2>&1
 ufw allow https >/dev/null 2>&1
 ufw enable -y >/dev/null 2>&1
 systemctl enable ufw
+sed -i 's/ENABLED=no/ENABLED=yes/g' /etc/ufw/ufw.conf
 
 # Wyłączenie niepotrzebnych modułów Apache
 echo -e "\e[32mWyłączanie modułów Apache\e[0m"
