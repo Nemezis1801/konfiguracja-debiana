@@ -38,20 +38,20 @@ for dns_address in $dns_addresses; do
 done
 
 # Aktualizacja systemu i instalacja narzędzi
-apt update
-apt upgrade -y
-apt install build-essential curl git -y
+apt update > /dev/null
+apt upgrade -y > /dev/null
+apt install build-essential curl git -y > /dev/null
 
 # Instalacja serwera Apache
-apt install apache2 -y
-systemctl start apache2
-systemctl enable apache2
+apt install apache2 -y > /dev/null
+systemctl start apache2 
+systemctl enable apache2 
 
 # Instalacja PHP i modułów PHP
-apt install php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml -y
+apt install php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml -y > /dev/null
 
 # Instalacja bazy danych MySQL/MariaDB
-apt install mariadb-server mariadb-client -y
+apt install mariadb-server mariadb-client -y > /dev/null
 systemctl start mariadb
 systemctl enable mariadb
 
@@ -69,7 +69,7 @@ y
 EOF
 
 # Instalacja narzędzi do pracy z plikami FTP
-apt install vsftpd -y
+apt install vsftpd -y > /dev/null
 systemctl start vsftpd
 systemctl enable vsftpd
 
@@ -83,10 +83,10 @@ echo "local_root=/home/\$USER" >> /etc/vsftpd.conf
 echo "write_enable=YES" >> /etc/vsftpd.conf
 
 # Instalacja narzędzi do monitorowania serwera
-apt install htop -y
+apt install htop -y > /dev/null
 
 # Instalacja fail2ban i ufw
-apt install fail2ban ufw -y
+apt install fail2ban ufw -y > /dev/null
 
 # Konfiguracja Fail2ban
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
@@ -119,8 +119,14 @@ echo "Deny from all" >> /etc/apache2/conf-available/htaccess.conf
 echo "</Files>" >> /etc/apache2/conf-available/htaccess.conf
 a2enconf htaccess
 
-# Utworzenie użytkownika www-data bez loginu
-useradd --no-create-home --shell /usr/sbin/nologin www-data
+# Sprawdzenie, czy użytkownik www-data istnieje
+if id -u www-data >/dev/null 2>&1; then
+    # Jeśli istnieje, zmiana jego ustawień
+    usermod --shell /usr/sbin/nologin www-data
+else
+    # Jeśli nie istnieje, utworzenie go z odpowiednimi ustawieniami
+    useradd --no-create-home --shell /usr/sbin/nologin www-data
+fi
 
 # Zmiana uprawnień dla plików i katalogów
 chown -R www-data:www-data /var/www/html
