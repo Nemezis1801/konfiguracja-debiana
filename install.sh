@@ -40,18 +40,14 @@ done
 # Aktualizacja systemu i instalacja narzędzi
 apt update > /dev/null
 apt upgrade -y > /dev/null
-apt install build-essential curl git -y > /dev/null
+apt install build-essential curl git apache2 mariadb-server mariadb-client php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml vsftpd -y > /dev/null
 
 # Instalacja serwera Apache
-apt install apache2 -y > /dev/null
 systemctl start apache2 
 systemctl enable apache2 
 
-# Instalacja PHP i modułów PHP
-apt install php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml -y > /dev/null
 
 # Instalacja bazy danych MySQL/MariaDB
-apt install mariadb-server mariadb-client -y > /dev/null
 systemctl start mariadb
 systemctl enable mariadb
 
@@ -69,7 +65,6 @@ y
 EOF
 
 # Instalacja narzędzi do pracy z plikami FTP
-apt install vsftpd -y > /dev/null
 systemctl start vsftpd
 systemctl enable vsftpd
 
