@@ -112,17 +112,17 @@ echo -e "\e[32mKonfiguracja Fail2ban\e[0m"
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 sed -i 's/bantime = 10m/bantime = 1h/g' /etc/fail2ban/jail.local
 sed -i 's/maxretry = 5/maxretry = 3/g' /etc/fail2ban/jail.local
-systemctl enable fail2ban 
-systemctl start fail2ban
+systemctl enable fail2ban >/dev/null 2>&1
+systemctl start fail2ban >/dev/null 2>&1
 
 # Konfiguracja zasad firewalla
 echo -e "\e[32mKonfiguracja firewalla\e[0m"
-ufw default deny incoming >/dev/null 2>&1
-ufw default allow outgoing >/dev/null 2>&1
-ufw allow ssh >/dev/null 2>&1
-ufw allow http >/dev/null 2>&1
-ufw allow https >/dev/null 2>&1
-ufw enable >/dev/null 2>&1
+ufw default deny incoming 
+ufw default allow outgoing 
+ufw allow ssh 
+ufw allow http
+ufw allow https 
+ufw enable
 
 # Wyłączenie niepotrzebnych modułów Apache
 echo -e "\e[32mWyłączanie modułów Apache\e[0m"
