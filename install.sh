@@ -119,11 +119,23 @@ echo "Deny from all" >> /etc/apache2/conf-available/htaccess.conf
 echo "</Files>" >> /etc/apache2/conf-available/htaccess.conf
 a2enconf htaccess
 
+# Instalacja modułu mod_security
+apt-get update
+apt-get install libapache2-mod-security2 -y
+
 # Włączenie modułu mod_security
-apt install libapache2-mod-security2 -y
-sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/g' /etc/modsecurity/modsecurity.conf-recommended
-ln -s /usr/share/modsecurity-crs/owasp-crs.load /etc/apache2/mods-enabled/
-ln -s /usr/share/modsecurity-crs/owasp-crs.conf /etc/apache2/mods-enabled/
+sed -i 's/SecRuleEngine DetectionOnly/SecRuleEngine On/' /etc/modsecurity/modsecurity.conf-recommended
+
+# Tworzenie katalogu dla reguł mod_security
+mkdir /etc/modsecurity/rules/
+
+# Pobieranie reguł OWASP do katalogu /etc/modsecurity/rules/
+git clone https://github.com/SpiderLabs/owasp-modsecurity-crs.git /tmp/owasp-modsecurity-crs
+mv /tmp/owasp-modsecurity-crs/crs-setup.conf.example /etc/modsecurity/rules/crs-setup.conf
+cp -R /tmp/owasp-modsecurity-crs/rules /etc/modsecurity/
+
+# Konfiguracja pliku /etc/apache2/mods-enabled/security2.conf
+echo "IncludeOptional /etc/modsecurity/rules/*.conf" >> /etc/apache2/mods-enabled/security2.conf
 
 # Utworzenie użytkownika www-data bez loginu
 useradd --no-create-home --shell /usr/sbin/nologin www-data
