@@ -69,7 +69,7 @@ done
 echo -e "\e[32mAktulizacja i instalacja niezbędnych narzędzi\e[0m" 
 apt-get update >/dev/null 2>&1
 apt-get upgrade -y >/dev/null 2>&1
-apt-get install htop fail2ban ufw build-essential curl git apache2 mariadb-server mariadb-client php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml vsftpd -y >/dev/null 2>&1
+apt-get install htop fail2ban ufw build-essential curl git apache2 mariadb-server mariadb-client php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml vsftpd open-vm-tools -y >/dev/null 2>&1
 
 # Instalacja serwera Apache
 echo -e "\e[32mWłączanie Apache\e[0m"
