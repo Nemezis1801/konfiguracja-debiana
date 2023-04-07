@@ -113,12 +113,12 @@ systemctl start fail2ban >/dev/null 2>&1
 echo -e "\e[32mKonfiguracja firewalla\e[0m"
 ufw default deny incoming  >/dev/null 2>&1
 ufw default allow outgoing >/dev/null 2>&1
-ufw allow ssh >/dev/null 2>&1
 ufw allow http >/dev/null 2>&1
 ufw allow https >/dev/null 2>&1
 ufw enable -y >/dev/null 2>&1
 systemctl enable ufw
 sed -i 's/ENABLED=no/ENABLED=yes/g' /etc/ufw/ufw.conf
+sed -i 's/IPV6=yes/IPV6=no/g' /etc/default/ufw
 
 # Wyłączenie niepotrzebnych modułów Apache
 echo -e "\e[32mWyłączanie modułów Apache\e[0m"
