@@ -16,13 +16,13 @@ allowed_ips=("$allowed_ips")
 allowed_users=(allowed_users)
 
 # Dodanie wpisów do pliku /etc/resolv.conf
-echo "Dodawanie domeny do pliku /etc/resolv.conf"
+echo -e "\e[32mDodawanie domeny do pliku /etc/resolv.conf\e[0m"
 cat > /etc/resolv.conf <<EOF
 search $domena
 EOF
 
 # Dodanie wpisów do pliku /etc/resolv.conf
-echo "Dodawanie adresów IP do resolv.conf"
+echo -e "\e[32mDodawanie adresów IP do resolv.conf\e[0m"
 cat > /etc/resolv.conf <<EOF
 search umg.edu.pl
 EOF
@@ -32,24 +32,24 @@ for dns_address in $dns_addresses; do
 done
 
 # Aktualizacja systemu i instalacja narzędzi
-echo "Aktulizacja i instalacja niezbędnych narzędzi" 
+echo -e "\e[32mAktulizacja i instalacja niezbędnych narzędzi\e[0m" 
 apt update > /dev/null
 apt upgrade -y > /dev/null
 apt install htop fail2ban ufw build-essential curl git apache2 mariadb-server mariadb-client php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml vsftpd -y > /dev/null
 
 # Instalacja serwera Apache
-echo "Włączanie Apache"
+echo -e "\e[32mWłączanie Apache\e[0m"
 systemctl start apache2 
 systemctl enable apache2 
 
 
 # Instalacja bazy danych MySQL/MariaDB
-echo "Włączanie MariaDB"
+echo -e "\e[32mWłączanie MariaDB\e[0m"
 systemctl start mariadb
 systemctl enable mariadb
 
 # Wywołanie funkcji mysql_secure_installation z automatycznym wprowadzeniem danych
-echo "Zabezpieczanie bazy danych"
+echo -e "\e[32mZabezpieczanie bazy danych\e[0m"
 mysql_secure_installation <<EOF
 
 $mysql_password
@@ -63,18 +63,18 @@ y
 EOF
 
 # Instalacja narzędzi do pracy z plikami FTP
-echo "włączanie vsftpd"
+echo -e "\e[32mwłączanie vsftpd\e[0m"
 systemctl start vsftpd
 systemctl enable vsftpd
 
 # Ustawienie opcji chroot_local_user na YES
-echo "Konfiguracja vsftpd"
+echo -e "\e[32mKonfiguracja vsftpd\e[0m"
 sed -i 's/#chroot_local_user=YES/chroot_local_user=YES/g' /etc/vsftpd.conf
 echo "local_root=/home/\$USER" >> /etc/vsftpd.conf
 echo "write_enable=YES" >> /etc/vsftpd.conf
 
 # Konfiguracja Fail2ban
-echo "Konfiguracja Fail2ban"
+echo -e "\e[32mKonfiguracja Fail2ban\e[0m"
 cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 sed -i 's/bantime = 10m/bantime = 1h/g' /etc/fail2ban/jail.local
 sed -i 's/maxretry = 5/maxretry = 3/g' /etc/fail2ban/jail.local
@@ -82,7 +82,7 @@ systemctl enable fail2ban
 systemctl start fail2ban
 
 # Konfiguracja zasad firewalla
-echo "Konfiguracja firewalla"
+echo -e "\e[32mKonfiguracja firewalla\e[0m"
 ufw default deny incoming
 ufw default allow outgoing
 ufw allow ssh
@@ -91,15 +91,15 @@ ufw allow https
 ufw enable
 
 # Wyłączenie niepotrzebnych modułów Apache
-echo "Wyłączanie modułów Apache"
-a2dismod status
-a2dismod autoindex
-a2dismod cgi
-a2dismod negotiation
-a2dismod userdir
+echo -e "\e[32mWyłączanie modułów Apache\e[0m"
+a2dismod --quiet status --force
+a2dismod --quiet autoindex --force
+a2dismod --quiet cgi --force
+a2dismod --quiet negotiation --force
+a2dismod --quiet userdir --force
 
 # Zablokowanie dostępu do plików .htaccess
-echo "Zablokowanie dostępu do plików .htaccess"
+echo -e "\e[32mZablokowanie dostępu do plików .htaccess\e[0m"
 echo "<Files .htaccess>" > /etc/apache2/conf-available/htaccess.conf
 echo "Order allow,deny" >> /etc/apache2/conf-available/htaccess.conf
 echo "Deny from all" >> /etc/apache2/conf-available/htaccess.conf
@@ -107,7 +107,7 @@ echo "</Files>" >> /etc/apache2/conf-available/htaccess.conf
 a2enconf htaccess
 
 # Sprawdzenie, czy użytkownik www-data istnieje
-echo "Konfiguracja użytkownika www-data"
+echo -e "\e[32mKonfiguracja użytkownika www-data\e[0m"
 if id -u www-data >/dev/null 2>&1; then
     usermod --shell /usr/sbin/nologin www-data
 else
@@ -115,19 +115,19 @@ else
 fi
 
 # Zmiana uprawnień dla plików i katalogów
-echo "Zmiana uprawnień do plików i katalogów"
+echo -e "\e[32mZmiana uprawnień do plików i katalogów\e[0m"
 chown -R www-data:www-data /var/www/html
 find /var/www/html -type d -exec chmod 750 {} \;
 find /var/www/html -type f -exec chmod 640 {} \;
 
 # Utworzenie osobnego pliku logów dla Apache
-echo "Utworznie osobnego pliku do logów dla Apache"
+echo -e "\e[32mUtworznie osobnego pliku do logów dla Apache\e[0m"
 cp /etc/apache2/conf-available/other-vhosts-access-log.conf /etc/apache2/conf-available/other-vhosts-access-log.conf.bak
 sed -i 's|CustomLog /var/log/apache2/other_vhosts_access.log vhost_combined|#CustomLog /var/log/apache2/other_vhosts_access.log vhost_combined|g' /etc/apache2/conf-available/other-vhosts-access-log.conf
 echo "CustomLog /var/log/apache2/access.log combined" >> /etc/apache2/conf-available/other-vhosts-access-log.conf
 
 # Utworzenie osobnego pliku logów dla PHP
-echo "Utworzenie osobnego pliku logów dla PHP"
+echo -e "\e[32mUtworzenie osobnego pliku logów dla PHP\e[0m"
 php_version=$(php -r "echo substr(PHP_VERSION, 0, 3);")
 cp /etc/php/$php_version/apache2/php.ini /etc/php/$php_version/apache2/php.ini.bak
 sed -i 's|;error_log = log/php_error.log|error_log = /var/log/php_errors.log|g' /etc/php/$php_version/apache2/php.ini
@@ -135,7 +135,7 @@ touch /var/log/php_errors.log
 chmod 666 /var/log/php_errors.log
 
 # Edycja pliku konfiguracyjnego SSH
-echo "Konfiguracja SSH"
+echo -e "\e[32mKonfiguracja SSH\e[0m"
 sed -i 's/#PermitRootLogin yes/PermitRootLogin no/g' /etc/ssh/sshd_config
 sed -i 's/#PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config
 sed -i 's/#MaxAuthTries 6/MaxAuthTries 3/' /etc/ssh/sshd_config
@@ -149,20 +149,20 @@ sed -i 's/ServerSignature On/#ServerSignature On/' /etc/apache2/conf-enabled/sec
 echo "AllowUsers ${allowed_users[*]}" >> /etc/ssh/sshd_config
 
 # Dodanie reguł do firewalla
-echo "Dodatnie reguł do firewalla"
+echo -e "\e[32mDodatnie reguł do firewalla\e[0m"
 for ip in "${allowed_ips[@]}"
 do
     ufw allow from $ip to any port 22
 done
 
 # Restart Apache
-echo "Restart Apache"
+echo -e "\e[32mRestart Apache\e[0m"
 systemctl restart apache2
 
 # Restart usługi SSH
-echo "Restart SSHD"
+echo -e "\e[32mRestart SSHD\e[0m"
 systemctl restart sshd
 
 # Restart usługi vsftpd
-echo "Restart vsftpd"
+echo -e "\e[32mRestart vsftpd\e[0m"
 systemctl restart vsftpd
