@@ -40,7 +40,7 @@ do
 done
 
 read -p $'\e[33mPodaj adres domenowy DNS: \e[0m' domena
-read -ps $'\e[32mPodaj hasło użytkownika root w MySQL: \e[0m' mysql_password
+read -s -p $'\e[32mPodaj hasło użytkownika root w MySQL: \e[0m' mysql_password
 
 
 # Ustawienie adresów IP, dla których będzie dostępny serwer
