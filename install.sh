@@ -62,8 +62,8 @@ cat > /etc/resolv.conf <<EOF
 search umg.edu.pl
 EOF
 
-for dns_address in $dns_addresses; do
-    echo "nameserver $dns_address" >> /etc/resolv.conf
+for dns_address1 in "${dns_addresses[@]}"; do
+    echo "nameserver $dns_address1" >> /etc/resolv.conf
 done
 
 # Aktualizacja systemu i instalacja narzędzi
@@ -124,6 +124,7 @@ ufw allow ssh >/dev/null 2>&1
 ufw allow http >/dev/null 2>&1
 ufw allow https >/dev/null 2>&1
 ufw enable -y >/dev/null 2>&1
+systemctl enable ufw
 
 # Wyłączenie niepotrzebnych modułów Apache
 echo -e "\e[32mWyłączanie modułów Apache\e[0m"
