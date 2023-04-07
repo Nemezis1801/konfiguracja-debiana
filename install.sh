@@ -133,7 +133,7 @@ sed -i 's|CustomLog /var/log/apache2/other_vhosts_access.log vhost_combined|#Cus
 echo "CustomLog /var/log/apache2/access.log combined" >> /etc/apache2/conf-available/other-vhosts-access-log.conf
 
 # Pobranie numeru wersji PHP
-php_version=$(php -r "echo PHP_VERSION;")
+php_version=$(php -r "echo substr(PHP_VERSION, 0, 3);")
 
 # Utworzenie osobnego pliku logów dla PHP
 cp /etc/php/$php_version/apache2/php.ini /etc/php/$php_version/apache2/php.ini.bak
