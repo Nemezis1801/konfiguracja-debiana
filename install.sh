@@ -196,7 +196,7 @@ echo -e "\e[32mRestart vsftpd\e[0m"
 systemctl restart vsftpd
 
 # Ponowna aktualizacja
-apt-get update
-apt-get full-upgrade -y
+apt-get update  >/dev/null 2>&1
+apt-get full-upgrade -y  >/dev/null 2>&1
 
 reboot
