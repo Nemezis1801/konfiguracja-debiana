@@ -4,7 +4,7 @@ allowed_ips=()
 allowed_users=()
 dns_addresses=()
 # Pobranie wartości od użytkownika i przypisanie jej do zmiennej
-read -p $'\e[33mWprowadź użytkownika bez uprawnień root (służy do ograczenia dostępu temu użytkownikowi): \e[0m' USERS
+read -p $'\e[33mWprowadź użytkownika bez uprawnień root (służy do ograczenia dostępu temu użytkownikowi): \e[0m' USER
 
 while true
 do
