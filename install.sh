@@ -51,9 +51,6 @@ EOF
 
 # Dodanie wpisów do pliku /etc/resolv.conf
 echo -e "\e[32mDodawanie adresów IP do resolv.conf\e[0m"
-cat > /etc/resolv.conf <<EOF
-search umg.edu.pl
-EOF
 
 for dns_address1 in "${dns_addresses[@]}"; do
     echo "nameserver $dns_address1" >> /etc/resolv.conf
