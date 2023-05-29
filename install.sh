@@ -56,11 +56,49 @@ for dns_address1 in "${dns_addresses[@]}"; do
     echo "nameserver $dns_address1" >> /etc/resolv.conf
 done
 
+# Prompt the user to choose between Apache and Nginx
+echo "Wybierz co chcesz zainstalować?:"
+select web_server in "Apache" "Nginx"; do
+    case $web_server in
+        Apache ) echo "You have chosen Apache."; break;;
+        Nginx ) echo "You have chosen Nginx."; break;;
+    esac
+done
+
+# Instalacja wybranego serwera
+if [ "$web_server" == "Apache" ]; then
+    apt-get install apache2 -y >/dev/null 2>&1
+    # Other Apache-related configuration...
+else
+    apt-get install nginx -y >/dev/null 2>&1
+    # Add here any Nginx-related configuration...
+fi
+
+# Prompt the user to choose whether to install a database
+echo "Chcesz zainstlować MariaDB?"
+select db_install in "Yes" "No"; do
+    case $db_install in
+        Yes ) echo "You have chosen to install MariaDB."; break;;
+        No ) echo "You have chosen not to install MariaDB."; break;;
+    esac
+done
+
+# Install the database if the user chose "Yes"
+if [ "$db_install" == "Yes" ]; then
+    apt-get install mariadb-server mariadb-client -y >/dev/null 2>&1
+    echo -e "\e[32mWłączanie MariaDB\e[0m"
+    systemctl start mariadb >/dev/null 2>&1
+    systemctl enable mariadb >/dev/null 2>&1
+   # Other MariaDB-related configuration...
+fi
+
+
+
 # Aktualizacja systemu i instalacja narzędzi
 echo -e "\e[32mAktulizacja i instalacja niezbędnych narzędzi\e[0m" 
 apt-get update >/dev/null 2>&1
 apt-get upgrade -y >/dev/null 2>&1
-apt-get install htop fail2ban ufw build-essential curl git apache2 mariadb-server mariadb-client php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml vsftpd open-vm-tools -y >/dev/null 2>&1
+apt-get install htop fail2ban ufw build-essential curl git php libapache2-mod-php php-cli php-curl php-gd php-mysql php-mbstring php-xml vsftpd open-vm-tools -y >/dev/null 2>&1
 
 # Instalacja serwera Apache
 echo -e "\e[32mWłączanie Apache\e[0m"
@@ -69,9 +107,7 @@ systemctl enable apache2 >/dev/null 2>&1
 
 
 # Instalacja bazy danych MySQL/MariaDB
-echo -e "\e[32mWłączanie MariaDB\e[0m"
-systemctl start mariadb >/dev/null 2>&1
-systemctl enable mariadb >/dev/null 2>&1
+
 
 # Wywołanie funkcji mysql_secure_installation z automatycznym wprowadzeniem danych
 echo -e "\e[32mZabezpieczanie bazy danych\e[0m"
